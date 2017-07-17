@@ -1,8 +1,8 @@
 class Pact < Formula
   desc "Interpreter for the Pact smart contract language"
   homepage "https://github.com/kadena-io/pact"
-  url "http://kadena.io/pact/builds/2.2.1/osx/pact-2.2.1.tar.gz"
-  sha256 "fad0e5d139e685ff6576c11d2e4c14712a12bc29818d2fdf44dd72e656044153"
+  url "http://kadena.io/pact/builds/2.2.2/osx/pact-2.2.2.tar.gz"
+  sha256 "a31d909feeee8456b2409974b87c6b3d0bbfe1bc09e5e8e2fff5b1391fd59ec7"
 
   bottle :unneeded
 
