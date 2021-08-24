@@ -8,7 +8,7 @@ class Z3 < Formula
   bottle :unneeded
 
   def install
-    bin.install "pact"
+    bin.install "z3"
   end
 
   test do
