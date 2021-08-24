@@ -4,7 +4,7 @@ class Pact < Formula
   url "https://github.com/kadena-io/pact/releases/download/v4.1/pact-4.1-osx.tar.gz"
   sha256 "432e5d45c8634e65eefc94021ff2f3c4bfca7fffd76f1e23146e2a66582182f2"
 
-  depends_on "z3"
+  depends_on "kadena-io/pact/z3"
 
   bottle :unneeded
 
