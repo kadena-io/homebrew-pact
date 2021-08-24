@@ -1,10 +1,10 @@
 class Z3 < Formula
   desc "High-performance theorem prover"
   homepage "https://github.com/Z3Prover/z3"
-  url "https://github.com/Z3Prover/z3/archive/z3-4.8.12.tar.gz"
-  sha256 "e3aaefde68b839299cbc988178529535e66048398f7d083b40c69fe0da55f8b7"
+  url "https://github.com/Z3Prover/z3/archive/z3-4.8.10.tar.gz"
+  sha256 "12cce6392b613d3133909ce7f93985d2470f0d00138837de06cf7eb2992886b4"
   license "MIT"
-  head "https://github.com/Z3Prover/z3.git", branch: "develop"
+  head "https://github.com/Z3Prover/z3.git"
 
   livecheck do
     url :stable
@@ -13,23 +13,17 @@ class Z3 < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "7718352b7b7b7e3cc454892a563212ac8b02259e90005a1d73ba30062b7e7df3"
-    sha256 cellar: :any,                 big_sur:       "ec65441e86922c521bfee1ec48ddcedd7ddcadcaac5b0301ffa5b6ba4cde4895"
-    sha256 cellar: :any,                 catalina:      "55d80044e8f62f8846d787c813fa0da76d20b84e278ea173cec922741854790b"
-    sha256 cellar: :any,                 mojave:        "0c7796128c833fb0a0da6cafb1d3564d8f42484df722b84035ccbc07a737f69a"
-    sha256 cellar: :any,                 high_sierra:   "0c7796128c833fb0a0da6cafb1d3564d8f42484df722b84035ccbc07a737f69a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1ded592aadd4c67db5f1dcee03799d7363e48579882cfd34a4c00b71cb87ca28"
+    cellar :any
+    sha256 "a8a2dab47dcde379343d66bc38630e96fff4f0af2a11f7ef981a7e535dab78d9" => :big_sur
+    sha256 "751cef8bbabfa63369cfb76be421b49123d720833f290b356171cb460f5a1ec3" => :arm64_big_sur
+    sha256 "214adde7572bc8a15e496c5d5c9e4ead2896f734c4aae4ede0769ac103668e9a" => :catalina
+    sha256 "12808ffa55f75ef38a61faf4f973445a6436ccc1cae30fd29489b249fd22467b" => :mojave
+    sha256 "037a6a59ab8b4c776421d4beb3583ce10b0e45b00c4dac9d8075ec56e0e9e858" => :high_sierra
   end
 
   # Has Python bindings but are supplementary to the main library
   # which does not need Python.
   depends_on "python@3.9" => :build
-
-  on_linux do
-    depends_on "gcc" # For C++17
-  end
-
-  fails_with gcc: "5"
 
   def install
     python3 = Formula["python@3.9"].opt_bin/"python3"
