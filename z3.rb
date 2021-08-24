@@ -1,53 +1,12 @@
 class Z3 < Formula
-  desc "High-performance theorem prover"
+  desc "High-performance theorem prover, pact binary distro"
   homepage "https://github.com/Z3Prover/z3"
-  url "https://github.com/Z3Prover/z3/archive/z3-4.8.10.tar.gz"
-  sha256 "12cce6392b613d3133909ce7f93985d2470f0d00138837de06cf7eb2992886b4"
+  url "https://github.com/kadena-io/pact/releases/download/v4.1/z3-4.8.10-osx.tar.gz"
+  sha256 "8db49ec89614708874c68f7b72e7704108beebbb416780f5e09db18f6cb032eb"
   license "MIT"
   head "https://github.com/Z3Prover/z3.git"
 
-  livecheck do
-    url :stable
-    strategy :github_latest
-    regex(%r{href=.*?/tag/z3[._-]v?(\d+(?:\.\d+)+)["' >]}i)
-  end
-
-  bottle do
-    cellar :any
-    sha256 "a8a2dab47dcde379343d66bc38630e96fff4f0af2a11f7ef981a7e535dab78d9" => :big_sur
-    sha256 "751cef8bbabfa63369cfb76be421b49123d720833f290b356171cb460f5a1ec3" => :arm64_big_sur
-    sha256 "214adde7572bc8a15e496c5d5c9e4ead2896f734c4aae4ede0769ac103668e9a" => :catalina
-    sha256 "12808ffa55f75ef38a61faf4f973445a6436ccc1cae30fd29489b249fd22467b" => :mojave
-    sha256 "037a6a59ab8b4c776421d4beb3583ce10b0e45b00c4dac9d8075ec56e0e9e858" => :high_sierra
-  end
-
-  # Has Python bindings but are supplementary to the main library
-  # which does not need Python.
-  depends_on "python@3.9" => :build
-
-  def install
-    python3 = Formula["python@3.9"].opt_bin/"python3"
-    xy = Language::Python.major_minor_version python3
-    system python3, "scripts/mk_make.py",
-                     "--prefix=#{prefix}",
-                     "--python",
-                     "--pypkgdir=#{lib}/python#{xy}/site-packages",
-                     "--staticlib"
-
-    cd "build" do
-      system "make"
-      system "make", "install"
-    end
-
-    system "make", "-C", "contrib/qprofdiff"
-    bin.install "contrib/qprofdiff/qprofdiff"
-
-    pkgshare.install "examples"
-  end
-
   test do
-    system ENV.cc, "-I#{include}", "-L#{lib}", "-lz3",
-           pkgshare/"examples/c/test_capi.c", "-o", testpath/"test"
-    system "./test"
+    system "#{bin}/z3", "-version"
   end
 end
