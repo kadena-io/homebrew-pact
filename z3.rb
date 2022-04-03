@@ -5,8 +5,6 @@ class Z3 < Formula
   sha256 "8db49ec89614708874c68f7b72e7704108beebbb416780f5e09db18f6cb032eb"
   license "MIT"
 
-  bottle :unneeded
-
   def install
     bin.install "z3"
   end
