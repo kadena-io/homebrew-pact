@@ -5,8 +5,6 @@ class Pact < Formula
   sha256 "9a9110330df68b3dd2b68424b4bb7bed8533b89ee10605de7f8028199f48a4d5"
   depends_on "kadena-io/pact/z3"
 
-  bottle :unneeded
-
   def install
     bin.install "pact"
   end
