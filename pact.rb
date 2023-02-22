@@ -1,8 +1,8 @@
 class Pact < Formula
   desc "Interpreter for the Pact smart contract language"
   homepage "https://github.com/kadena-io/pact"
-  url "https://github.com/kadena-io/pact/releases/download/v4.4.1/pact-4.4.1-osx.tar.gz"
-  sha256 "37dccdced60aece7a0cb796af4923ded41f2373080f04176814540d95989d7f8"
+  url "https://github.com/kadena-io/pact/releases/download/v4.6.0/pact-4.6.0-osx.tar.gz"
+  sha256 "1a59fa703aa6a83286794bae8c699d57be7100491c6b2bddb5a2f5ce62a5a335"
   depends_on "kadena-io/pact/z3"
 
   def install
