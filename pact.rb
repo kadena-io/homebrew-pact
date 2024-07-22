@@ -7,8 +7,8 @@ class Pact < Formula
   depends_on "openssl@3"
 
   on_arm do
-    url "https://github.com/kadena-io/pact/releases/download/v4.11.0/pact-4.11.0-aarch64-osx.tar.gz"
-    sha256 "4bdd64fe18e20bf1582a5aeea58852635ec2f626cf672e48e00e40a05d3ee3ff"
+    url "https://github.com/kadena-io/pact/releases/download/v4.12.0/pact-4.12.0-aarch64-osx.tar.gz"
+    sha256 "2168f55ececfd7bb73c7c85082214e00212f098b4a1946c89578dabe97f89d2b"
   end
 
   def install
