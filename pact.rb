@@ -11,6 +11,11 @@ class Pact < Formula
     sha256 "a05b5a74d7cccd5d0ea0a61ffad8fbe0cf383bc836598779b07fa5b37fc61ceb"
   end
 
+  head do
+    url "https://github.com/kadena-io/pact-5/releases/download/development-latest/pact-5-dev-aarch64-osx.tar.gz"
+    sha256 "2dd5208ee4e4475ce3d0250b4be66610e2db638b4a588c77ab6852f3b25af243"
+  end
+
   def install
     bin.install "pact"
   end
