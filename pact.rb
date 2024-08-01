@@ -24,9 +24,19 @@ class Pact < Formula
     end
 
     def install
+      if Hardware::CPU.intel?
+        opoo "Warning: On intel machines, we fallback to the Pact 4.11 release."
+      end
+
       bin.install "pact"
     end
 
+    def caveats
+      <<~EOS
+         The head version (Pact 5 development build) is currently only available for ARM-based Macs.
+         The Intel Macs will use the 4.11 Release.
+    EOS
+    end
     test do
       system "#{bin}/z3", "-version"
       system "#{bin}/pact", "--version"
