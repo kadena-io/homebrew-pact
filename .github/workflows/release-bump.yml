@@ -1,0 +1,88 @@
+name: Release - Bump Version
+
+## Release automation for pact's published packages in brew
+# Designed to run systems in kadena-io/homebrew-pact
+
+# There is a 
+
+run-name: "Release homebrew pact ${{ inputs.release_sha }} from ${{ github.sha}}"
+on:
+  workflow_dispatch:
+    inputs:
+      pact_intel:
+        description: "url of latest pact release package for intel"
+        type: string
+        required: false
+      pact_arm:
+        description: "url of latest pact release package for arm"
+        type: string
+        required: false
+      pact_head:
+        description: "url of latest pact-5 release package for arm"
+        type: string
+        required: false
+  workflow_call:
+    inputs:
+      pact_intel:
+        description: "url of latest pact release package for intel"
+        type: string
+        required: false
+      pact_arm:
+        description: "url of latest pact release package for arm"
+        type: string
+        required: false
+      pact_head:
+        description: "url of latest pact-5 release package for arm"
+        type: string
+        required: false
+
+jobs:
+  Update-References:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: kadena-io/homebrew-pact
+          
+      - name: Update pact intel reference sha
+        run: |
+          echo "DOCKERHUB_SHA=not yet updated" >> $GITHUB_ENV
+          sed -i -e "s/ARG REVISION=.*/ARG REVISION=${{ inputs.SHORT_SHA }}/" Dockerfile
+
+      - name: Update GHC version if needed
+        run: |
+          replace_in_rb() {
+            ON_TARGET=$1
+            RELEASE_URL=$2
+            HEAD_SEARCH=$3
+
+            if [[ -z "$RELEASE_URL" ]]; then
+              echo "$ON_TARGET is blank, not updating url"
+              return 0
+            else
+              echo "$ON_TARGET will be updated to $RELEASE_URL"
+            fi
+            
+            curl -L "$RELEASE_URL" > target.tar.gz
+            RELEASE_SHA=`sha256sum target.tar.gz | awk '{ print $1 }'`
+
+            sed -i --regexp-extended -z "s/($HEAD_SEARCH)($ON_TARGET do\n[ ]*)url \"([a-z0-9:\/\.\-]+)\"(\n[ ]*sha256 \")([0-9a-f]+)\"/\1\2url \"$RELEASE_URL\"\4$RELEASE_SHA\"/" pact.rb
+          }
+
+          replace_in_rb on_intel ${{ inputs.pact_intel }}
+          replace_in_rb on_arm ${{ inputs.pact_intel }}
+          replace_in_rb on_arm ${{ inputs.pact_head }} '(\<head do\>\n[ ]*)'
+          
+
+      - name: Update master branch with dockerfile version
+        run: |
+          git config --local user.name "Kadena DevOps"
+          git config --local user.email "devops@kadena.io"
+          git add Dockerfile
+          git commit --allow-empty -m "pact package version update"
+          # allow empty in case this is a re-run
+          git status
+          git tag chainweb-${{ inputs.VERSION_NEW }}
+          git push
+          git push --force origin --tags
+
