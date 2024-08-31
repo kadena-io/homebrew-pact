@@ -43,14 +43,20 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: kadena-io/homebrew-pact
+          ssh-key: ${{ secrets.GH_DEPLOYKEY_PACTBREW }}
           
-      - name: Update pact intel reference sha
+      - name: Update pact reference shas
         run: |
           echo "DOCKERHUB_SHA=not yet updated" >> $GITHUB_ENV
           sed -i -e "s/ARG REVISION=.*/ARG REVISION=${{ inputs.SHORT_SHA }}/" Dockerfile
 
       - name: Update GHC version if needed
         run: |
+          # we fire this function for every possible url so stop if no url was passed to script
+          # get release to calculate sha (and exit if the curl fails)
+          # escape the release URL / characters
+          # replace the release url and sha
+          # blank out variables to prevent conflicts
           replace_in_rb() {
             ON_TARGET=$1
             RELEASE_URL=$2
@@ -62,16 +68,22 @@ jobs:
             else
               echo "$ON_TARGET will be updated to $RELEASE_URL"
             fi
-            
-            curl -L "$RELEASE_URL" > target.tar.gz
+
+            curl -L "$RELEASE_URL" --output target.tar.gz || exit 1
             RELEASE_SHA=`sha256sum target.tar.gz | awk '{ print $1 }'`
+            
+            RELEASE_URL=$(printf '%s\n' "$RELEASE_URL" | sed 's:[\\/&]:\\&:g; $!s/$/\\/')
 
             sed -i --regexp-extended -z "s/($HEAD_SEARCH)($ON_TARGET do\n[ ]*)url \"([a-z0-9:\/\.\-]+)\"(\n[ ]*sha256 \")([0-9a-f]+)\"/\1\2url \"$RELEASE_URL\"\4$RELEASE_SHA\"/" pact.rb
+
+            ON_TARGET=""
+            RELEASE_URL=""
+            HEAD_SEARCH=""
           }
 
-          replace_in_rb on_intel ${{ inputs.pact_intel }}
-          replace_in_rb on_arm ${{ inputs.pact_intel }}
-          replace_in_rb on_arm ${{ inputs.pact_head }} '(\<head do\>\n[ ]*)'
+          replace_in_rb on_intel "${{ inputs.pact_intel }}"
+          replace_in_rb on_arm "${{ inputs.pact_arm }}"
+          replace_in_rb on_arm "${{ inputs.pact_head }}" '\<head do\>\n[ ]*'
           
 
       - name: Update master branch with dockerfile version
