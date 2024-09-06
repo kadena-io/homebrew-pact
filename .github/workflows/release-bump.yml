@@ -45,11 +45,6 @@ jobs:
           repository: kadena-io/homebrew-pact
           ssh-key: ${{ secrets.GH_DEPLOYKEY_PACTBREW }}
           
-      - name: Update pact reference shas
-        run: |
-          echo "DOCKERHUB_SHA=not yet updated" >> $GITHUB_ENV
-          sed -i -e "s/ARG REVISION=.*/ARG REVISION=${{ inputs.SHORT_SHA }}/" Dockerfile
-
       - name: Update GHC version if needed
         run: |
           # we fire this function for every possible url so stop if no url was passed to script
@@ -86,11 +81,11 @@ jobs:
           replace_in_rb on_arm "${{ inputs.pact_head }}" '\<head do\>\n[ ]*'
           
 
-      - name: Update master branch with dockerfile version
+      - name: Update master branch with new homebrew
         run: |
           git config --local user.name "Kadena DevOps"
           git config --local user.email "devops@kadena.io"
-          git add Dockerfile
+          git add pact.rb
           git commit --allow-empty -m "pact package version update"
           # allow empty in case this is a re-run
           git status
