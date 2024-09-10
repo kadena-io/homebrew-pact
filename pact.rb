@@ -12,14 +12,14 @@ class Pact < Formula
     end
 
     on_arm do
-      url "https://github.com/kadena-io/pact/releases/download/v4.12.0/pact-4.12.0-aarch64-osx.tar.gz"
-      sha256 "a05b5a74d7cccd5d0ea0a61ffad8fbe0cf383bc836598779b07fa5b37fc61ceb"
+      url "https://github.com/kadena-io/pact-5/releases/latest/download/"
+      sha256 "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
     end
 
     head do
       on_arm do
-        url "https://github.com/kadena-io/pact-5/releases/download/development-latest/pact-5-dev-aarch64-osx.tar.gz"
-      sha256 "2dd5208ee4e4475ce3d0250b4be66610e2db638b4a588c77ab6852f3b25af243"
+        url "https://github.com/kadena-io/pact-5/releases/download/nightly/pact-nightly-aarch64-osx.tar.gz"
+      sha256 "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
       end
     end
 
