@@ -1,0 +1,31 @@
+name: Release - update hashes
+
+on:
+  workflow_dispatch:
+    inputs:
+      on_intel_default_url:
+        description: "replace intel release"
+        type: string
+        required: false
+      on_arm_default_url:
+        description: "replace arm release"
+        type: string
+        required: false
+      on_arm_head_url:
+        description: "replace pact-5 head arm release"
+        type: string
+        required: false
+
+jobs:
+  update-url-and-hash:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+    # define function to
+    # - download from a release url
+    # - calculate sha256 hash
+    # - replace the url and hash string in pact.rb
+    # then call that function for all 3 inputs
+    # lastly push the updated file to master
+    # ironically we aren't doing this on a mac
+    # there's surely some way to push it to brew, or brew is already set up for referencing this file, but that's all people do to update this.
