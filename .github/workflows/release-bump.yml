@@ -38,7 +38,7 @@ on:
 
 jobs:
   Update-References:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -79,7 +79,17 @@ jobs:
           replace_in_rb on_intel "${{ inputs.pact_intel }}"
           replace_in_rb on_arm "${{ inputs.pact_arm }}"
           replace_in_rb on_arm "${{ inputs.pact_head }}" '\<head do\>\n[ ]*'
-          
+
+      - name: Validate pact arm nightly release
+        run: |
+          brew install --build-from-source pact.rb --head
+          pact -v
+          brew uninstall pact
+      - name: Validate pact arm release
+        run: |
+          brew install --build-from-source pact.rb --head
+          pact -v
+          brew uninstall pact         
 
       - name: Update master branch with new homebrew
         run: |
