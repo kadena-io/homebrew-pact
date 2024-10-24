@@ -79,7 +79,16 @@ jobs:
           replace_in_rb on_intel "${{ inputs.pact_intel }}"
           replace_in_rb on_arm "${{ inputs.pact_arm }}"
           replace_in_rb on_arm "${{ inputs.pact_head }}" '\<head do\>\n[ ]*'
-          
+
+      - name: Validate pact arm nightly release
+        run: |
+          brew install --build-from-source pact.rb --head
+          pact -v
+          brew unlink pact
+      - name: Validate pact arm release
+          brew install --build-from-source pact.rb --head
+          pact -v
+          brew unlink pact         
 
       - name: Update master branch with new homebrew
         run: |
