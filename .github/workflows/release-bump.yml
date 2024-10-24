@@ -84,12 +84,12 @@ jobs:
         run: |
           brew install --build-from-source pact.rb --head
           pact -v
-          brew unlink pact
+          brew uninstall pact
       - name: Validate pact arm release
         run: |
           brew install --build-from-source pact.rb --head
           pact -v
-          brew unlink pact         
+          brew uninstall pact         
 
       - name: Update master branch with new homebrew
         run: |
