@@ -86,6 +86,7 @@ jobs:
           pact -v
           brew unlink pact
       - name: Validate pact arm release
+        run: |
           brew install --build-from-source pact.rb --head
           pact -v
           brew unlink pact         
