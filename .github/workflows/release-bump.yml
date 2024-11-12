@@ -38,69 +38,89 @@ on:
 
 jobs:
   Update-References:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    outputs:
+      release_branch: ${{ steps.set-branch.outputs.release_branch }}
     steps:
       - uses: actions/checkout@v4
         with:
           repository: kadena-io/homebrew-pact
           ssh-key: ${{ secrets.GH_DEPLOYKEY_PACTBREW }}
-          
+
+      - name: Set release branch name
+        id: set-branch
+        run: |
+          RELEASE_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          echo "release_branch=release/${RELEASE_SHA}" >> $GITHUB_OUTPUT
+
       - name: Update GHC version if needed
         run: |
-          # we fire this function for every possible url so stop if no url was passed to script
-          # get release to calculate sha (and exit if the curl fails)
-          # escape the release URL / characters
-          # replace the release url and sha
-          # blank out variables to prevent conflicts
           replace_in_rb() {
             ON_TARGET=$1
             RELEASE_URL=$2
             HEAD_SEARCH=$3
-          
             if [[ -z "$RELEASE_URL" ]]; then
               echo "$ON_TARGET is blank, not updating url"
               return 0
             else
               echo "$ON_TARGET will be updated to $RELEASE_URL"
             fi
-          
             curl -L "$RELEASE_URL" --output target.tar.gz || exit 1
-            RELEASE_SHA=$(shasum -a 256 target.tar.gz | awk '{ print $1 }')
+            RELEASE_SHA=`sha256sum target.tar.gz | awk '{ print $1 }'`
             
             RELEASE_URL=$(printf '%s\n' "$RELEASE_URL" | sed 's:[\\/&]:\\&:g; $!s/$/\\/')
-          
-            sed -i '' -E "s/($HEAD_SEARCH)($ON_TARGET do[[:space:]]*url \"[a-z0-9:\/\.\-]+\"[[:space:]]*sha256 \")[0-9a-f]+\"/\1\2$RELEASE_SHA\"/" pact.rb
-            sed -i '' -E "s/($HEAD_SEARCH)($ON_TARGET do[[:space:]]*url \")[a-z0-9:\/\.\-]+\"/\1\2$RELEASE_URL\"/" pact.rb
-          
+            sed -i --regexp-extended -z "s/($HEAD_SEARCH)($ON_TARGET do\n[ ]*)url \"([a-z0-9:\/\.\-]+)\"(\n[ ]*sha256 \")([0-9a-f]+)\"/\1\2url \"$RELEASE_URL\"\4$RELEASE_SHA\"/" pact.rb
             ON_TARGET=""
             RELEASE_URL=""
             HEAD_SEARCH=""
           }
-
           replace_in_rb on_intel "${{ inputs.pact_intel }}"
           replace_in_rb on_arm "${{ inputs.pact_arm }}"
           replace_in_rb on_arm "${{ inputs.pact_head }}" '\<head do\>\n[ ]*'
+
+      - name: Create and push release branch
+        run: |
+          git config --local user.name "Kadena DevOps"
+          git config --local user.email "devops@kadena.io"
+          git checkout -b ${{ steps.set-branch.outputs.release_branch }}
+          git add pact.rb
+          git commit -m "pact package version update"
+          git push origin ${{ steps.set-branch.outputs.release_branch }}
+
+  Validate-and-Merge:
+    needs: Update-References
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: kadena-io/homebrew-pact
+          ssh-key: ${{ secrets.GH_DEPLOYKEY_PACTBREW }}
+          fetch-depth: 0
+
+      - name: Checkout release branch
+        run: |
+          git checkout ${{ needs.Update-References.outputs.release_branch }}
 
       - name: Validate pact arm nightly release
         run: |
           brew install --build-from-source pact.rb --head
           pact -v
+          brew unlink pact
           brew uninstall pact
+
       - name: Validate pact arm release
         run: |
-          brew install --build-from-source pact.rb --head
+          brew install --build-from-source pact.rb
           pact -v
+          brew unlink pact         
           brew uninstall pact         
 
-      - name: Update master branch with new homebrew
+      - name: Merge release branch to master
+        if: success()
         run: |
           git config --local user.name "Kadena DevOps"
           git config --local user.email "devops@kadena.io"
-          git add pact.rb
-          git commit --allow-empty -m "pact package version update"
-          # allow empty in case this is a re-run
-          git status
-          git tag chainweb-${{ inputs.VERSION_NEW }}
-          git push
-          git push --force origin --tags
-
+          git checkout master
+          git merge --no-ff ${{ needs.Update-References.outputs.release_branch }} -m "Merge release ${{ needs.Update-References.outputs.release_branch }}"
+          git push origin master
+          git push --delete origin ${{ needs.Update-References.outputs.release_branch }}
