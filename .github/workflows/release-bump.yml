@@ -69,10 +69,23 @@ jobs:
             curl -L "$RELEASE_URL" --output target.tar.gz || exit 1
             RELEASE_SHA=$(shasum -a 256 target.tar.gz | awk '{ print $1 }')
             
-            RELEASE_URL=$(printf '%s\n' "$RELEASE_URL" | sed 's:[\\/&]:\\&:g; $!s/$/\\/')
+            # Escape special characters in RELEASE_URL for sed
+            RELEASE_URL_ESCAPED=$(printf '%s\n' "$RELEASE_URL" | sed -e 's/[\/&]/\\&/g')
           
-            sed -i '' -E "s/($HEAD_SEARCH)($ON_TARGET do[[:space:]]*url \"[a-z0-9:\/\.\-]+\"[[:space:]]*sha256 \")[0-9a-f]+\"/\1\2$RELEASE_SHA\"/" pact.rb
-            sed -i '' -E "s/($HEAD_SEARCH)($ON_TARGET do[[:space:]]*url \")[a-z0-9:\/\.\-]+\"/\1\2$RELEASE_URL\"/" pact.rb
+            # Use awk for the replacement
+            awk -v target="$ON_TARGET" -v url="$RELEASE_URL_ESCAPED" -v sha="$RELEASE_SHA" -v search="$HEAD_SEARCH" '
+            $0 ~ search {
+              p = 1
+            }
+            p && /url/ {
+              sub(/url "[^"]+"/, "url \"" url "\"")
+            }
+            p && /sha256/ {
+              sub(/sha256 "[^"]+"/, "sha256 \"" sha "\"")
+              p = 0
+            }
+            {print}
+            ' pact.rb > pact.rb.tmp && mv pact.rb.tmp pact.rb
           
             ON_TARGET=""
             RELEASE_URL=""
