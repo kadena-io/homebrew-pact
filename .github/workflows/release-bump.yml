@@ -65,7 +65,7 @@ jobs:
             fi
 
             curl -L "$RELEASE_URL" --output target.tar.gz || exit 1
-            RELEASE_SHA=`sha256sum target.tar.gz | awk '{ print $1 }'`
+            RELEASE_SHA=`shasum -a 256 target.tar.gz | awk '{ print $1 }'`
             
             RELEASE_URL=$(printf '%s\n' "$RELEASE_URL" | sed 's:[\\/&]:\\&:g; $!s/$/\\/')
 
