@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       pact_intel:
-        description: "url of latest pact release package for intel"
+        description: "url of latest pact release package for intel (legacy, not updated)"
         type: string
         required: false
       pact_arm:
@@ -18,7 +18,7 @@ on:
         type: string
         required: false
       pact_head:
-        description: "url of latest pact-5 release package for arm"
+        description: "url of latest nightly/dev package for arm"
         type: string
         required: false
   workflow_call:
