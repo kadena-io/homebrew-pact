@@ -52,6 +52,8 @@ jobs:
           # escape the release URL / characters
           # replace the release url and sha
           # blank out variables to prevent conflicts
+          cat pact.rb
+          echo "Updating values in the above file to below:"
           replace_in_rb() {
             ON_TARGET=$1
             RELEASE_URL=$2
@@ -80,6 +82,8 @@ jobs:
           replace_in_rb on_intel "${{ inputs.pact_intel }}"
           replace_in_rb on_arm "${{ inputs.pact_arm }}"
           replace_in_rb on_arm "${{ inputs.pact_head }}" '\<head do\>\n[ ]*'
+
+          cat pact.rb
 
       - name: Validate pact arm nightly release
         run: |
