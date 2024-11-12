@@ -56,21 +56,22 @@ jobs:
             ON_TARGET=$1
             RELEASE_URL=$2
             HEAD_SEARCH=$3
-
+          
             if [[ -z "$RELEASE_URL" ]]; then
               echo "$ON_TARGET is blank, not updating url"
               return 0
             else
               echo "$ON_TARGET will be updated to $RELEASE_URL"
             fi
-
+          
             curl -L "$RELEASE_URL" --output target.tar.gz || exit 1
-            RELEASE_SHA=`shasum -a 256 target.tar.gz | awk '{ print $1 }'`
+            RELEASE_SHA=$(shasum -a 256 target.tar.gz | awk '{ print $1 }')
             
             RELEASE_URL=$(printf '%s\n' "$RELEASE_URL" | sed 's:[\\/&]:\\&:g; $!s/$/\\/')
-
-            sed -i --regexp-extended -z "s/($HEAD_SEARCH)($ON_TARGET do\n[ ]*)url \"([a-z0-9:\/\.\-]+)\"(\n[ ]*sha256 \")([0-9a-f]+)\"/\1\2url \"$RELEASE_URL\"\4$RELEASE_SHA\"/" pact.rb
-
+          
+            sed -i '' -E "s/($HEAD_SEARCH)($ON_TARGET do[[:space:]]*url \"[a-z0-9:\/\.\-]+\"[[:space:]]*sha256 \")[0-9a-f]+\"/\1\2$RELEASE_SHA\"/" pact.rb
+            sed -i '' -E "s/($HEAD_SEARCH)($ON_TARGET do[[:space:]]*url \")[a-z0-9:\/\.\-]+\"/\1\2$RELEASE_URL\"/" pact.rb
+          
             ON_TARGET=""
             RELEASE_URL=""
             HEAD_SEARCH=""
