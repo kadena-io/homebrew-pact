@@ -1,10 +1,12 @@
 class Pact < Formula
   desc "Interpreter for the Pact smart contract language"
   homepage "https://github.com/kadena-io/pact"
+  version "5.0"
 
   on_macos do
     depends_on "z3"
     depends_on "openssl@3"
+    depends_on "mpfr"
 
     on_intel do
       url "https://github.com/kadena-io/pact/releases/download/v4.11.0/pact-4.11.0-osx.tar.gz"
