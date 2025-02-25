@@ -9,10 +9,6 @@ run-name: "Release homebrew pact ${{ inputs.release_sha }} from ${{ github.sha}}
 on:
   workflow_dispatch:
     inputs:
-      pact_intel:
-        description: "url of latest pact release package for intel (legacy, not updated)"
-        type: string
-        required: false
       pact_arm:
         description: "url of latest pact release package for arm"
         type: string
@@ -23,10 +19,6 @@ on:
         required: false
   workflow_call:
     inputs:
-      pact_intel:
-        description: "url of latest pact release package for intel"
-        type: string
-        required: false
       pact_arm:
         description: "url of latest pact release package for arm"
         type: string
@@ -74,7 +66,6 @@ jobs:
             RELEASE_URL=""
             HEAD_SEARCH=""
           }
-          replace_in_rb on_intel "${{ inputs.pact_intel }}"
           replace_in_rb on_arm "${{ inputs.pact_arm }}"
           replace_in_rb on_arm "${{ inputs.pact_head }}" '\<head do\>\n[ ]*'
 

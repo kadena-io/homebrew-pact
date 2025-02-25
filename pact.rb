@@ -8,11 +8,6 @@ class Pact < Formula
     depends_on "openssl@3"
     depends_on "mpfr"
 
-    on_intel do
-      url "https://github.com/kadena-io/pact/releases/download/v4.11.0/pact-4.11.0-osx.tar.gz"
-      sha256 "8d3e194a13593cdf33dcd314cb0ca2452302106bfe238624f8e9761c9a4e1ca2"
-    end
-
     on_arm do
       url "https://github.com/kadena-io/pact-5/releases/download/5.1/pact-5.1-darwin-aarch64.tar.gz"
       sha256 "68c8f4135109effae04f0240cc0c975784ae1146b7b3b3d3868babad701f9924"
@@ -27,7 +22,7 @@ class Pact < Formula
 
     def install
       if Hardware::CPU.intel?
-        opoo "Warning: On intel machines, we fallback to the Pact 4.11 release."
+        odie "Error: Pact 5 is not supported on Intel Macs."
       end
 
       bin.install "pact"
@@ -35,8 +30,7 @@ class Pact < Formula
 
     def caveats
       <<~EOS
-         The head version (Pact 5 development build) is currently only available for ARM-based Macs.
-         The Intel Macs will use the 4.11 Release.
+         Pact 5 is only available for ARM-based Macs.
     EOS
     end
     test do
