@@ -4,7 +4,6 @@ class Pact < Formula
   version "5.2"
 
   on_macos do
-    depends_on "z3"
     depends_on "openssl@3"
     depends_on "mpfr"
 
@@ -34,7 +33,6 @@ class Pact < Formula
     EOS
     end
     test do
-      system "#{bin}/z3", "-version"
       system "#{bin}/pact", "--version"
     end
   end
