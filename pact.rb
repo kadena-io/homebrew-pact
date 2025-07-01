@@ -8,8 +8,8 @@ class Pact < Formula
     depends_on "mpfr"
 
     on_arm do
-      url "https://github.com/kadena-io/pact-5/releases/download/5.2/pact-5.2-darwin-aarch64.tar.gz"
-      sha256 "4dbfdb946350505d14d1e92d8b2cdebe2fcd539fd5501be8a788df6df42a39e7"
+      url "https://github.com/kadena-io/pact-5/releases/download/5.3/pact-5.3-darwin-aarch64.tar.gz"
+      sha256 "95f99292a02b7d884dfbc97392e0db250e21309728983024115278af8363cd59"
     end
 
     head do
