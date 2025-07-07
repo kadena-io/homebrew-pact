@@ -1,7 +1,7 @@
 class Pact < Formula
   desc "Interpreter for the Pact smart contract language"
   homepage "https://github.com/kadena-io/pact-5"
-  version "5.2"
+  version "5.3"
 
   on_macos do
     depends_on "openssl@3"
