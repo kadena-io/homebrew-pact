@@ -15,7 +15,7 @@ class Pact < Formula
     head do
       on_arm do
         url "https://github.com/kadena-io/pact-5/releases/download/nightly/pact-nightly-darwin-aarch64.tar.gz"
-      sha256 "1a6e435fe6c027cefa17805b1f7e78773ef7c896d8d172cf3693f0889cfd4094"
+      sha256 "8bbc1136df37e4150add9adbdcb31b666c0fc76b6b98a63bc7bd3f0cd0a164b0"
       end
     end
 
